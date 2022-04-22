@@ -1,9 +1,5 @@
-﻿using Extreme.Net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using Extreme.Net;
 
 namespace RuriLib.Functions.UserAgent
 {
@@ -30,7 +26,11 @@ namespace RuriLib.Functions.UserAgent
             Opera,
 
             /// <summary>The Opera Mini mobile browser.</summary>
-            OperaMini
+            OperaMini,
+
+            Android,
+
+            IOS,
         }
 
         /// <summary>
@@ -56,6 +56,12 @@ namespace RuriLib.Functions.UserAgent
 
                 case Browser.OperaMini:
                     return Http.OperaMiniUserAgent();
+
+                case Browser.Android:
+                    return AndroidUserAgent();
+
+                case Browser.IOS:
+                    return IOSUserAgent();
 
                 default:
                     throw new Exception("Browser not supported");
@@ -92,6 +98,54 @@ namespace RuriLib.Functions.UserAgent
 
             // Opera mini = 4%
             return Http.OperaMiniUserAgent();
+        }
+
+        public static string AndroidUserAgent()
+        {
+            string version;
+            string androidVer;
+            string chromeVer;
+
+            var rand = new Random();
+
+            version = rand.Next(500).ToString() + "." + rand.Next(400);
+            androidVer = rand.Next(1, 10).ToString() + "." +
+                rand.Next(1, 10) + "." +
+                rand.Next(1, 10);
+
+            chromeVer = rand.Next(25, 80).ToString() + ".0";
+
+            return $"Mozilla/5.0 (Linux; Android {androidVer}; SM-G{rand.Next(800)}S Build/MMB29K; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/{version} Chrome/{chromeVer} Mobile Safari/537.36";
+        }
+
+        /// <summary>
+        /// Генерирует случайный User-Agent от мобильного браузера Opera.
+        /// </summary>
+        /// <returns>Случайный User-Agent от мобильного браузера Opera.</returns>
+        public static string IOSUserAgent()
+        {
+            string version;
+            string iosVer;
+            string mobileVer;
+
+            var rand = new Random();
+
+            version = rand.Next(500).ToString() + "." + rand.Next(400);
+            iosVer = rand.Next(3, 15).ToString() + "_0";
+
+            mobileVer = rand.Next(25, 500).ToString();
+
+
+            return $"Mozilla/5.0 (iPhone; CPU iPhone OS {iosVer} like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/{version} Mobile/15A{mobileVer} Safari/604.1";
+        }
+
+        public static string RandomFromList(string localInputString)
+        {
+            var rand = new Random();
+
+            var splitUA = localInputString.Split('|');
+
+            return splitUA[rand.Next(splitUA.Length)];
         }
     }
 }

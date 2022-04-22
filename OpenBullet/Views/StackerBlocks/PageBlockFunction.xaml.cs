@@ -1,12 +1,11 @@
-﻿using OpenBullet.Views.Main.Runner;
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Windows.Controls;
 using RuriLib;
 using RuriLib.Functions.Crypto;
 using RuriLib.Functions.UserAgent;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Windows;
-using System.Windows.Controls;
+using static RuriLib.BlockFunction;
 
 namespace OpenBullet.Views.StackerBlocks
 {
@@ -57,6 +56,36 @@ namespace OpenBullet.Views.StackerBlocks
             {
                 aesPaddingCombobox.Items.Add(p);
             }
+
+            foreach (var d in Enum.GetNames(typeof(DateToUnixTimeType)))
+            {
+                dateToUnixTimeCombobox.Items.Add(d);
+            }
+
+            encCombobox.Items.Add("utf-8");
+            encCombobox.Items.Add("windows-1251");
+            encCombobox.Items.Add(1251);
+
+            foreach (var e in Enum.GetNames(typeof(EncodingMethods)))
+            {
+                encFuncCombobox.Items.Add(e);
+            }
+
+            foreach (var e in Enum.GetNames(typeof(ScryptMethods)))
+            {
+                if (e == nameof(ScryptMethods.Encode))
+                {
+                    scryptMethods.Items.Add(e);
+                    break;
+                }
+            }
+
+            foreach (var e in Enum.GetNames(typeof(BCryptMethods)))
+            {
+                bcryptMethods.Items.Add(e);
+            }
+
+            bcryptMethods.SelectedIndex = (int)vm.BCryptMeth;
 
             aesPaddingCombobox.SelectedIndex = (int)vm.AesPadding - 1;
 
@@ -111,11 +140,11 @@ namespace OpenBullet.Views.StackerBlocks
                     functionTabControl.SelectedIndex = 9;
                     break;
 
-                    /*
-                case BlockFunction.Function.RSADecrypt:
-                    functionTabControl.SelectedIndex = 10;
-                    break;
-                    */
+                /*
+            case BlockFunction.Function.RSADecrypt:
+                functionTabControl.SelectedIndex = 10;
+                break;
+                */
 
                 case BlockFunction.Function.RSAPKCS1PAD2:
                     functionTabControl.SelectedIndex = 11;
@@ -141,6 +170,27 @@ namespace OpenBullet.Views.StackerBlocks
                 case BlockFunction.Function.PBKDF2PKCS5:
                     functionTabControl.SelectedIndex = 16;
                     break;
+
+                case BlockFunction.Function.Remove:
+                    functionTabControl.SelectedIndex = 17;
+                    break;
+
+                case BlockFunction.Function.Split:
+                    functionTabControl.SelectedIndex = 18;
+                    break;
+
+                case BlockFunction.Function.Encoding:
+                    functionTabControl.SelectedIndex = 19;
+                    break;
+
+                case BlockFunction.Function.SCrypt:
+                    functionTabControl.SelectedIndex = 20;
+                    break;
+
+                case BlockFunction.Function.BCrypt:
+                    functionTabControl.SelectedIndex = 21;
+                    break;
+
             }
         }
 
@@ -168,6 +218,7 @@ namespace OpenBullet.Views.StackerBlocks
             { "UnixTimeToISO8601", "This Returns theh Current Unixtime. ex(1577840461 to 2020-01-01T01:01:01.000Z)" },
             { "RandomNum", "Generates a random number based on ranges (min max) given." },
             { "RandomString", "?l = Lowercase, ?u = Uppercase, ?d = Digit, ?f = Uppercase + Lowercase, ?s = Symbol, ?h = Hex (Lowercase), ?m = Upper + Digits,?n = Lower + Digits ?i = Lower + Upper + Digits, ?a = Any"},
+            { "EvaluateMathString", "Evaluating string '3 * 5 + Pow(2,3)' yield int 23"},
             { "Ceil", "This function rounds up to the input to the next full integer. Ex(input = 2.9 Output = 3"},
             { "Floor", "This function gets rid of the numbers after the decimal. Ex(input = 2.9 Output = 2"},
             { "Round", "This function round input to the nearest integer. Ex(input = 2.5 Output = 3"},
@@ -185,7 +236,25 @@ namespace OpenBullet.Views.StackerBlocks
             { "GetRandomUA", "Generates a random User Agent." },
             { "AESEncrypt", "Encrypts data with AES. All parameters must be provided as base64 strings. Uses SHA-256 to get a 256 bit key" },
             { "AESDecrypt", "Decrypts data with AES. All parameters must be provided as base64 strings. Uses SHA-256 to get a 256 bit key" },
-            { "PBKDF2PKCS5", "Generates a key based on a password. The salt, if provided, must be a base64 string" }
+            { "PBKDF2PKCS5", "Generates a key based on a password. The salt, if provided, must be a base64 string" },
+            { "Ntlm", "Generates NTLM hash" },
+            { "CurrentDate", "Gets current date in format dd.mm.yyyy" },
+            { "CurrentTime", "Gets current time in format hh:mm" },
+            { "DayOfWeek", "Get the current day of week in English" },
+            { "CurrentDay", "Get the current day number" },
+            { "CurrentMonth", "Get the current month number (without leading zero)" },
+            { "CurrentYear", "Get the current year number" },
+            { "ToLetter", "Find and extract all letters from a string" },
+            { "ToLetterOrDigit", "Find and extract all letters and digits from a string" },
+            { "NumberToWords", "Converts a number to english words (1 = one, 103 = one hundred and three)" },
+            { "WordsToNumber", "Converts numbers written in english back to its numerical representation." },
+            { "Abs", "Gets the modulus of a number" },
+            { "Split", "Splits a string into substrings based on the strings in an array. You can specify whether the substrings include empty array elements." },
+            { "Remove", "Removes a given amount of characters from the string starting from the given index. " },
+            { "ReverseString", "Reverses the input string." },
+            { "SCrypt", "Hashes the input string using SCrypt with specified options." },
+            { "BCrypt", "Hashes the input string using BCrypt with specified options." },
+            { "Capitalize", "Capitalizes the input string (the first letter becomes uppercase, the rest lowercase)." }
         };
 
         private void dictionaryRTB_TextChanged(object sender, TextChangedEventArgs e)
@@ -221,6 +290,63 @@ namespace OpenBullet.Views.StackerBlocks
         private void randomUABrowserCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             vm.UserAgentBrowser = (UserAgent.Browser)((ComboBox)e.OriginalSource).SelectedIndex;
+        }
+
+        private void Page_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            try { SetItemToComboBox(); } catch { }
+        }
+
+        private void SetItemToComboBox()
+        {
+            dateToUnixTimeCombobox.SelectedIndex = (int)vm.UnixTimeType;
+        }
+
+        private void scryptMethods_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                switch (scryptMethods.SelectedIndex)
+                {
+                    case 0://ScryptMethods.Encode
+                        dockPanelCompInput.Visibility = System.Windows.Visibility.Collapsed;
+                        stackPanelEncode.Visibility = System.Windows.Visibility.Visible;
+                        break;
+                    case 1:// ScryptMethods.Compare
+                        stackPanelEncode.Visibility = System.Windows.Visibility.Collapsed;
+                        dockPanelCompInput.Visibility = System.Windows.Visibility.Visible;
+                        break;
+                    default:
+                        stackPanelEncode.Visibility = System.Windows.Visibility.Collapsed;
+                        dockPanelCompInput.Visibility = System.Windows.Visibility.Collapsed;
+                        break;
+                }
+            }
+            catch { }
+        }
+
+        private void bcryptMethods_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                switch (bcryptMethods.SelectedIndex)
+                {
+                    case 0://BCryptMethods.Encode
+                        dockPanelVerifyInput.Visibility = System.Windows.Visibility.Collapsed;
+                        dockPanelBcryptSalt.Visibility = System.Windows.Visibility.Visible;
+                        break;
+                    case 2://BCryptMethods.Verify
+                        dockPanelBcryptSalt.Visibility = System.Windows.Visibility.Collapsed;
+                        dockPanelVerifyInput.Visibility = System.Windows.Visibility.Visible;
+                        break;
+
+                    default:
+                        dockPanelBcryptSalt.Visibility = System.Windows.Visibility.Collapsed;
+                        dockPanelVerifyInput.Visibility = System.Windows.Visibility.Collapsed;
+                        break;
+                }
+            }
+            catch { }
         }
     }
 }

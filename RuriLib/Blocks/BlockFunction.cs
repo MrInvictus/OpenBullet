@@ -1,9 +1,4 @@
-﻿using RuriLib.Functions.Crypto;
-using RuriLib.Functions.Formats;
-using RuriLib.Functions.Time;
-using RuriLib.Functions.UserAgent;
-using RuriLib.LS;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -14,6 +9,16 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Media;
+using Humanizer;
+using Microsoft.IdentityModel.Tokens;
+using RuriLib.Functions.Crypto;
+using RuriLib.Functions.EvalString;
+using RuriLib.Functions.Formats;
+using RuriLib.Functions.NTLM;
+using RuriLib.Functions.Time;
+using RuriLib.Functions.UserAgent;
+using RuriLib.Functions.WordToNum;
+using RuriLib.LS;
 
 namespace RuriLib
 {
@@ -45,8 +50,35 @@ namespace RuriLib
             /// <summary>Translates words in a given string.</summary>
             Translate,
 
+            ///<summary>DateTime Now</summary>
+            CurrentDate,
+
+            ///<summary>time</summary>
+            CurrentTime,
+
+            ///<summary>week</summary>
+            DayOfWeek,
+
+            ///<summary>day</summary>
+            CurrentDay,
+
+            ///<summary>month</summary>
+            CurrentMonth,
+
+            ///<summary>year</summary>
+            CurrentYear,
+
             /// <summary>Converts a formatted date to a unix timestamp.</summary>
             DateToUnixTime,
+
+            /// <summary>convert date miladi to shamsi</summary>
+            DateToSolar,
+
+            /// <summary>convert date shamsi to miladi</summary>
+            DateToGregorian,
+
+            ///<summary></summary>
+            GetRemainingDay,
 
             /// <summary>Gets the length of a string.</summary>
             Length,
@@ -56,6 +88,24 @@ namespace RuriLib
 
             /// <summary>Converts all lowercase characters in a string to uppercase.</summary>
             ToUppercase,
+
+            /// <summary>Capitalizes the input string (the first letter becomes uppercase, the rest lowercase).</summary>
+            Capitalize,
+
+            /// <summary>Find and extract a letter from a string</summary>
+            ToLetter,
+
+            /// <summary>Find and extract a number from a string</summary>
+            ToDigit,
+
+            /// <summary>Find and extract a letter Or digit from a string</summary>
+            ToLetterOrDigit,
+
+            /// <summary>Convert integers to written numbers</summary>
+            NumberToWords,
+
+            /// <summary>Convert word to number</summary>
+            WordsToNumber,
 
             /// <summary>Replaces some text with something else, with or without using regex.</summary>
             Replace,
@@ -68,15 +118,18 @@ namespace RuriLib
 
             /// <summary>Decodes a URL-encoded input.</summary>
             URLDecode,
-            
+
             /// <summary>Unescapes characters in a string.</summary>
-            Unescape,      
+            Unescape,
 
             /// <summary>Encodes the input to be displayed in HTML or XML.</summary>
             HTMLEntityEncode,
 
             /// <summary>Decoded an input containing HTML or XML entities.</summary>
             HTMLEntityDecode,
+
+            ///<summary>character encoding</summary>
+            Encoding,
 
             /// <summary>Converts a unix timestamp to a formatted date.</summary>
             UnixTimeToDate,
@@ -93,6 +146,9 @@ namespace RuriLib
             /// <summary>Generates a random string based on a mask.</summary>
             RandomString,
 
+            /// <summary>Evaluating string "3 * 5 + Pow(2,3)" yield int 23</summary>
+            EvaluateMathString,
+
             /// <summary>Rounds a decimal input to the upper integer.</summary>
             Ceil,
 
@@ -101,6 +157,9 @@ namespace RuriLib
 
             /// <summary>Rounds a decimal input to the nearest integer.</summary>
             Round,
+
+            /// <summary>the absolute value of a double-precision floating-point number</summary>
+            Abs,
 
             /// <summary>Computes mathematical operations between decimal numbers.</summary>
             Compute,
@@ -126,6 +185,12 @@ namespace RuriLib
             /// <summary>Retrieves the character at a given index in the input string.</summary>
             CharAt,
 
+            /// <summary>Splits a string into substrings based on the strings in an array. You can specify whether the substrings include empty array elements.</summary>
+            Split,
+
+            /// <summary>Removes a given amount of characters from the string starting from the given index. </summary>
+            Remove,
+
             /// <summary>Gets a substring of the input.</summary>
             Substring,
 
@@ -145,7 +210,75 @@ namespace RuriLib
             AESDecrypt,
 
             /// <summary>Generates a key using a password based KDF.</summary>
-            PBKDF2PKCS5
+            PBKDF2PKCS5,
+
+            /// <summary>Generates an OAuth Verfier.</summary>
+            GenerateOAuthVerifier,
+
+            ///<summary>Generates an OAuth Challenge using the Verifer as Input.</summary>
+            GenerateOAuthChallenge,
+
+            ///<summary>Generates a GUID</summary>
+            GenerateGUID,
+
+            ///<summary>Generates a certain amount of bytes based on input</summary>
+            GenerateBytes,
+
+            /// <summary>Generates NTLM hash</summary>
+            Ntlm,
+
+            /// <summary>Encrypts a string with Scrypt.</summary>
+            SCrypt,
+
+            /// <summary>Encrypts a string with Bcrypt.</summary>
+            BCrypt,
+        }
+
+        /// <summary>
+        /// Date to unix time 
+        /// </summary>
+        public enum DateToUnixTimeType
+        {
+            /// <summary>Converts a formatted date to a unix timestamp Seconds</summary>
+            Seconds,
+            /// <summary>Converts a formatted date to a unix timestamp Miliseconds</summary>
+            Miliseconds,
+        }
+
+        /// <summary>
+        /// Encoding methods
+        /// </summary>
+        public enum EncodingMethods
+        {
+            ///<summary>encodes all the characters in the specified character array into a sequence of bytes.</summary>
+            GetBytes,
+            ///<summary>decodes a specified number of bytes starting at a specified address into a string.</summary>
+            GetString,
+        }
+
+        /// <summary>
+        /// Scrypt methods
+        /// </summary>
+        public enum ScryptMethods
+        {
+            /// <summary>Hash a password using the scrypt scheme</summary>
+            Encode,
+            /// <summary>Compares a password against a hashed password.</summary>
+            Compare,
+            /// <summary>Checks if the given hash is a valid scrypt hash</summary>
+            IsValid
+        }
+
+        /// <summary>
+        /// BCrypt methods
+        /// </summary>
+        public enum BCryptMethods
+        {
+            /// <summary>Hash a password using the bcrypt scheme</summary>
+            Encode,
+            GenerateSalt,
+            /// <summary>Verify a password against a hashed password.</summary>
+            Verify,
         }
 
         #region General Properties
@@ -193,6 +326,12 @@ namespace RuriLib
         private bool stopAfterFirstMatch = true;
         /// <summary>Whether to stop translating after the first match.</summary>
         public bool StopAfterFirstMatch { get { return stopAfterFirstMatch; } set { stopAfterFirstMatch = value; OnPropertyChanged(); } }
+
+        private bool useVar;
+        /// <summary>
+        /// use variable 
+        /// </summary>
+        public bool UseVar { get { return useVar; } set { useVar = value; OnPropertyChanged(); } }
 
         /// <summary>The dictionary containing the words and their translation.</summary>
         public Dictionary<string, string> TranslationDictionary { get; set; } = new Dictionary<string, string>();
@@ -260,6 +399,46 @@ namespace RuriLib
         /// <summary>The index of the wanted character.</summary>
         public string CharIndex { get { return charIndex; } set { charIndex = value; OnPropertyChanged(); } }
 
+        private string separator;
+        public string Separator
+        {
+            get => separator;
+            set
+            {
+                separator = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private int splitIndex = 1;
+        public int SplitIndex { get => splitIndex; set { splitIndex = value; OnPropertyChanged(); } }
+
+        private StringSplitOptions stringSplitOption;
+        public StringSplitOptions StringSplitOption
+        {
+            get => stringSplitOption;
+            set
+            {
+                stringSplitOption = value; OnPropertyChanged();
+            }
+        }
+
+        // -- RemoveSIndex
+
+        private string removeSIndex;
+        public string RemoveSIndex
+        {
+            get => removeSIndex;
+            set
+            {
+                removeSIndex = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string removeCount;
+        public string RemoveCount { get => removeCount; set { removeCount = value; OnPropertyChanged(); } }
+
         // -- Substring
         private string substringIndex = "0";
         /// <summary>The starting index for the substring.</summary>
@@ -295,6 +474,12 @@ namespace RuriLib
         /// <summary>The padding mode.</summary>
         public PaddingMode AesPadding { get { return aesPadding; } set { aesPadding = value; OnPropertyChanged(); } }
 
+        private bool hexKeys;
+        /// <summary>
+        /// String keys to hex
+        /// </summary>
+        public bool HexKeys { get => hexKeys; set { hexKeys = value; OnPropertyChanged(); } }
+
         // -- PBKDF2PKCS5
         private string kdfSalt = "";
         /// <summary>The KDF's salt as a base64 string.</summary>
@@ -315,6 +500,162 @@ namespace RuriLib
         private Hash kdfAlgorithm = Hash.SHA1;
         /// <summary>The size of the generated salt (in bytes) in case none is specified.</summary>
         public Hash KdfAlgorithm { get { return kdfAlgorithm; } set { kdfAlgorithm = value; OnPropertyChanged(); } }
+
+        private DateToUnixTimeType unixTimeType = DateToUnixTimeType.Seconds;
+        /// <summary>
+        /// Unix time type
+        /// </summary>
+        public DateToUnixTimeType UnixTimeType
+        {
+            get => unixTimeType;
+            set { unixTimeType = value; OnPropertyChanged(); }
+        }
+
+        private object getEncoding;
+        /// <summary>
+        /// Encoding name/codepage
+        /// </summary>
+        public object GetEncoding
+        {
+            get { return getEncoding; }
+            set { getEncoding = value; OnPropertyChanged(); }
+        }
+
+        private EncodingMethods encFunc;
+        /// <summary>
+        /// Encoding method
+        /// </summary>
+        public EncodingMethods EncFunc
+        {
+            get { return encFunc; }
+            set { encFunc = value; OnPropertyChanged(); }
+        }
+
+        private ScryptMethods scryptMeth;
+        /// <summary>
+        /// Scrypt method
+        /// </summary>
+        public ScryptMethods ScryptMeth
+        {
+            get { return scryptMeth; }
+            set { scryptMeth = value; OnPropertyChanged(); }
+        }
+
+        private string scryptSalt = "";
+        public string ScryptSalt
+        {
+            get { return scryptSalt; }
+            set { scryptSalt = value; OnPropertyChanged(); }
+        }
+
+        private int scryptCost = 1024;
+        public int ScryptCost
+        {
+            get { return scryptCost; }
+            set { scryptCost = value; OnPropertyChanged(); }
+        }
+
+        private int scryptBlockSize = 1;
+        public int ScryptBlockSize
+        {
+            get { return scryptBlockSize; }
+            set { scryptBlockSize = value; OnPropertyChanged(); }
+        }
+
+        private int scryptOutputLength = 16;
+        public int ScryptOutputLength
+        {
+            get { return scryptOutputLength; }
+            set { scryptOutputLength = value; OnPropertyChanged(); }
+        }
+
+        private bool scryptBase64Output = false;
+        /// <summary>
+        /// Encode scrypt output to base64
+        /// </summary>
+        public bool Base64Output
+        {
+            get { return scryptBase64Output; }
+            set { scryptBase64Output = value; OnPropertyChanged(); }
+        }
+
+        private string scryptHashedPassword;
+        /// <summary>
+        /// hashed password with scrypt
+        /// </summary>
+        public string ScryptHashedPassword
+        {
+            get { return scryptHashedPassword; }
+            set
+            {
+                scryptHashedPassword = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private BCryptMethods bcryptMeth;
+        /// <summary>
+        /// BCrypt method
+        /// </summary>
+        public BCryptMethods BCryptMeth
+        {
+            get { return bcryptMeth; }
+            set { bcryptMeth = value; OnPropertyChanged(); }
+        }
+
+        private string bcryptHashedPassword = "";
+        /// <summary>
+        /// hashed password with bcrypt
+        /// </summary>
+        public string BCryptHashedPassword
+        {
+            get { return bcryptHashedPassword; }
+            set
+            {
+                bcryptHashedPassword = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private int bcryptWorkFactor;
+
+        public int BCryptWorkFactor
+        {
+            get { return bcryptWorkFactor; }
+            set
+            {
+                bcryptWorkFactor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string bcryptSalt = "";
+
+        public string BCryptSalt
+        {
+            get { return bcryptSalt; }
+            set
+            {
+                bcryptSalt = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool useBCryptWorkFactor;
+        /// <summary>
+        /// bcrypt work factor
+        /// </summary>
+        public bool UseWorkFactor
+        {
+            get { return useBCryptWorkFactor; }
+            set
+            {
+                useBCryptWorkFactor = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         #endregion
 
         #region RandomString Properties
@@ -328,7 +669,7 @@ namespace RuriLib
         private static readonly string _upperlwr = _lowercase + _uppercase;
         private static readonly string _ludChars = _lowercase + _uppercase + _digits;
         private static readonly string _allChars = _lowercase + _uppercase + _digits + _symbols;
-        
+
         #endregion
 
         /// <summary>
@@ -374,7 +715,7 @@ namespace RuriLib
                     break;
 
                 case Function.Translate:
-                    if (LineParser.Lookahead(ref input) == TokenType.Boolean)
+                    while (LineParser.Lookahead(ref input) == TokenType.Boolean)
                         LineParser.SetBool(ref input, this);
                     TranslationDictionary = new Dictionary<string, string>();
                     while (input != string.Empty && LineParser.Lookahead(ref input) == TokenType.Parameter)
@@ -388,16 +729,24 @@ namespace RuriLib
                     break;
 
                 case Function.DateToUnixTime:
-                    DateFormat = LineParser.ParseLiteral(ref input, "DATE FORMAT");
+                    {
+                        DateFormat = LineParser.ParseLiteral(ref input, "DATE FORMAT");
+                        var tempInput = input;
+                        try { UnixTimeType = LineParser.ParseEnum(ref input, "UnixTimeType", typeof(DateToUnixTimeType)); } catch { input = tempInput; }
+                    }
                     break;
 
                 case Function.UnixTimeToDate:
-                    DateFormat = LineParser.ParseLiteral(ref input, "DATE FORMAT");
-                    // a little backward compatability with the old line format.
-                    if (LineParser.Lookahead(ref input) != TokenType.Literal)
                     {
-                        InputString = DateFormat;
-                        DateFormat = "yyyy-MM-dd:HH-mm-ss";
+                        DateFormat = LineParser.ParseLiteral(ref input, "DATE FORMAT");
+                        // a little backward compatability with the old line format.
+                        if (LineParser.Lookahead(ref input) != TokenType.Literal)
+                        {
+                            InputString = DateFormat;
+                            DateFormat = "yyyy-MM-dd:HH-mm-ss";
+                        }
+                        var tempInput = input;
+                        try { UnixTimeType = LineParser.ParseEnum(ref input, "UnixTimeType", typeof(DateToUnixTimeType)); } catch { input = tempInput; }
                     }
                     break;
 
@@ -424,7 +773,7 @@ namespace RuriLib
                         RandomMin = LineParser.ParseInt(ref input, "Minimum").ToString();
                         RandomMax = LineParser.ParseInt(ref input, "Maximum").ToString();
                     }
-                    
+
                     if (LineParser.Lookahead(ref input) == TokenType.Boolean)
                         LineParser.SetBool(ref input, this);
                     break;
@@ -435,6 +784,20 @@ namespace RuriLib
 
                 case Function.CharAt:
                     CharIndex = LineParser.ParseLiteral(ref input, "Index");
+                    break;
+
+                case Function.Split:
+                    Separator = LineParser.ParseLiteral(ref input, nameof(Separator));
+                    SplitIndex = LineParser.ParseInt(ref input, "Split Index");
+                    if (input.StartsWith($"{nameof(StringSplitOptions.RemoveEmptyEntries)} \""))
+                    {
+                        try { StringSplitOption = LineParser.ParseEnum(ref input, "String Split Option", typeof(StringSplitOptions)); } catch { }
+                    }
+                    break;
+
+                case Function.Remove:
+                    RemoveSIndex = LineParser.ParseLiteral(ref input, "SIndex");
+                    RemoveCount = LineParser.ParseLiteral(ref input, "Count");
                     break;
 
                 case Function.Substring:
@@ -478,6 +841,8 @@ namespace RuriLib
                     AesIV = LineParser.ParseLiteral(ref input, "IV");
                     AesMode = LineParser.ParseEnum(ref input, "Cipher mode", typeof(CipherMode));
                     AesPadding = LineParser.ParseEnum(ref input, "Padding mode", typeof(PaddingMode));
+                    if (LineParser.Lookahead(ref input) == TokenType.Boolean)
+                        LineParser.SetBool(ref input, this);
                     break;
 
                 case Function.PBKDF2PKCS5:
@@ -486,6 +851,53 @@ namespace RuriLib
                     KdfIterations = LineParser.ParseInt(ref input, "Iterations");
                     KdfKeySize = LineParser.ParseInt(ref input, "Key size");
                     KdfAlgorithm = LineParser.ParseEnum(ref input, "Algorithm", typeof(Hash));
+                    break;
+
+                case Function.Encoding:
+                    GetEncoding = LineParser.ParseLiteral(ref input, "Encoding name/codepage");
+                    EncFunc = LineParser.ParseEnum(ref input, "Encoding Methods", typeof(EncodingMethods));
+                    break;
+
+                case Function.SCrypt:
+                    ScryptMeth = LineParser.ParseEnum(ref input, "Scrypt Methods", typeof(ScryptMethods));
+
+                    if (ScryptMeth == ScryptMethods.Encode)
+                    {
+                        ScryptSalt = LineParser.ParseLiteral(ref input, "Scrypt salt");
+                        ScryptCost = LineParser.ParseInt(ref input, "Scrypt cost");
+                        ScryptBlockSize = LineParser.ParseInt(ref input, "Scrypt block size");
+                        ScryptOutputLength = LineParser.ParseInt(ref input, "Scrypt Output Length");
+
+                        if (LineParser.Lookahead(ref input) == TokenType.Boolean)
+                        {
+                            LineParser.SetBool(ref input, this);
+                        }
+                    }
+
+                    if (ScryptMeth == ScryptMethods.Compare)
+                    {
+                        ScryptHashedPassword = LineParser.ParseLiteral(ref input, "Hashed Password");
+                    }
+                    break;
+
+                case Function.BCrypt:
+                    BCryptMeth = LineParser.ParseEnum(ref input, "BCrypt Methods", typeof(BCryptMethods));
+
+                    BCryptSalt = LineParser.ParseLiteral(ref input, "Salt");
+
+                    while (LineParser.Lookahead(ref input) == TokenType.Boolean)
+                        LineParser.SetBool(ref input, this);
+
+                    if (UseWorkFactor)
+                    {
+                        BCryptWorkFactor = LineParser.ParseInt(ref input, "BCrypt Work Factor");
+                    }
+
+                    if (BCryptMeth == BCryptMethods.Verify)
+                    {
+                        BCryptHashedPassword = LineParser.ParseLiteral(ref input, "Hashed Password");
+                    }
+
                     break;
 
                 default:
@@ -497,7 +909,7 @@ namespace RuriLib
                 InputString = LineParser.ParseLiteral(ref input, "INPUT");
 
             // Try to parse the arrow, otherwise just return the block as is with default var name and var / cap choice
-            if (LineParser.ParseToken(ref input, TokenType.Arrow, false) == string.Empty)
+            if (LineParser.ParseToken(ref input, LS.TokenType.Arrow, false) == string.Empty)
                 return this;
 
             // Parse the VAR / CAP
@@ -543,8 +955,8 @@ namespace RuriLib
                     break;
 
                 case Function.Translate:
-                    writer
-                        .Boolean(StopAfterFirstMatch, nameof(StopAfterFirstMatch));
+                    writer.Boolean(StopAfterFirstMatch, nameof(StopAfterFirstMatch))
+                        .Boolean(UseVar, nameof(UseVar));
                     foreach (var t in TranslationDictionary)
                         writer
                             .Indent()
@@ -559,8 +971,11 @@ namespace RuriLib
 
                 case Function.UnixTimeToDate:
                 case Function.DateToUnixTime:
-                    writer
-                        .Literal(DateFormat);
+                    {
+                        writer.Literal(DateFormat);
+                        if (UnixTimeType != DateToUnixTimeType.Seconds)
+                            writer.Token(UnixTimeType);
+                    }
                     break;
 
                 case Function.Replace:
@@ -588,8 +1003,24 @@ namespace RuriLib
                     break;
 
                 case Function.CharAt:
-                    writer
-                        .Literal(CharIndex);
+                    writer.Literal(CharIndex);
+                    break;
+
+                case Function.Split:
+                    if (StringSplitOption == StringSplitOptions.None)
+                    {
+                        writer.Literal(Separator)
+                         .Integer(SplitIndex);
+                    }
+                    else
+                        writer.Literal(Separator)
+                            .Integer(SplitIndex)
+                            .Token(StringSplitOption, nameof(StringSplitOption));
+                    break;
+
+                case Function.Remove:
+                    writer.Literal(RemoveSIndex)
+                        .Literal(RemoveCount);
                     break;
 
                 case Function.Substring:
@@ -605,14 +1036,14 @@ namespace RuriLib
                         .Boolean(RsaOAEP, nameof(RsaOAEP));
                     break;
 
-                    /*
-                case Function.RSADecrypt:
-                    writer
-                        .Literal(RsaN)
-                        .Literal(RsaD)
-                        .Boolean(RsaOAEP, "RsaOAEP");
-                    break;
-                    */
+                /*
+            case Function.RSADecrypt:
+                writer
+                    .Literal(RsaN)
+                    .Literal(RsaD)
+                    .Boolean(RsaOAEP, "RsaOAEP");
+                break;
+                */
 
                 case Function.RSAPKCS1PAD2:
                     writer
@@ -635,7 +1066,8 @@ namespace RuriLib
                         .Literal(AesKey)
                         .Literal(AesIV)
                         .Token(AesMode)
-                        .Token(AesPadding);
+                        .Token(AesPadding)
+                        .Boolean(HexKeys, nameof(HexKeys));
                     break;
 
                 case Function.PBKDF2PKCS5:
@@ -646,7 +1078,46 @@ namespace RuriLib
                         .Integer(KdfKeySize)
                         .Token(KdfAlgorithm);
                     break;
-                        
+
+                case Function.Encoding:
+                    writer.Literal((GetEncoding ?? string.Empty).ToString())
+                        .Token(EncFunc);
+                    break;
+
+                case Function.SCrypt:
+                    writer.Token(ScryptMeth);
+
+                    if (ScryptMeth == ScryptMethods.Encode)
+                    {
+                        writer.Literal(ScryptSalt)
+                            .Integer(ScryptCost)
+                            .Integer(ScryptBlockSize)
+                            .Integer(ScryptOutputLength);
+                        if (Base64Output)
+                        {
+                            writer.Boolean(Base64Output, "Base64Output");
+                        }
+                    }
+
+                    else if (ScryptMeth == ScryptMethods.Compare)
+                    {
+                        writer.Literal(ScryptHashedPassword);
+                    }
+                    break;
+
+                case Function.BCrypt:
+                    writer.Token(BCryptMeth)
+                        .Literal(BCryptSalt);
+                    if (UseWorkFactor)
+                    {
+                        writer.Boolean(UseWorkFactor, nameof(UseWorkFactor))
+                           .Integer(BCryptWorkFactor, nameof(BCryptWorkFactor));
+                    }
+                    if (BCryptMeth == BCryptMethods.Verify)
+                    {
+                        writer.Literal(BCryptHashedPassword);
+                    }
+                    break;
             }
 
             writer
@@ -712,14 +1183,54 @@ namespace RuriLib
                         {
                             if (outputString.Contains(entry.Key))
                             {
-                                outputString = outputString.Replace(entry.Key, entry.Value);
+                                if (UseVar)
+                                    outputString = outputString.Replace(ReplaceValues(entry.Key, data), ReplaceValues(entry.Value, data));
+                                else
+                                    outputString = outputString.Replace(entry.Key, entry.Value);
                                 if (StopAfterFirstMatch) break;
                             }
                         }
                         break;
 
                     case Function.DateToUnixTime:
-                        outputString = localInputString.ToDateTime(dateFormat).ToUnixTimeSeconds().ToString();
+                        switch (UnixTimeType)
+                        {
+                            case DateToUnixTimeType.Seconds:
+                                if (!string.IsNullOrEmpty(localInputString))
+                                    outputString = localInputString.ToDateTime(DateFormat).ToUnixTimeSeconds().ToString();
+                                else
+                                    outputString = DateTime.Now.ToUnixTimeSeconds().ToString();
+                                break;
+                            case DateToUnixTimeType.Miliseconds:
+                                if (!string.IsNullOrEmpty(localInputString))
+                                    outputString = localInputString.ToDateTime(DateFormat).ToUnixTimeMilliseconds().ToString();
+                                else
+                                    outputString = DateTime.Now.ToUnixTimeMilliseconds().ToString();
+                                break;
+                        }
+                        break;
+
+                    case Function.DateToSolar:
+                        {
+                            var persian = new PersianCalendar();
+                            if (DateTime.TryParse(localInputString, out DateTime date))
+                            {
+                                outputString = string.Format("{0}/{1}/{2}", persian.GetYear(date),
+                                     persian.GetMonth(date),
+                                     persian.GetDayOfMonth(date));
+                            }
+                        }
+                        break;
+
+                    case Function.DateToGregorian:
+                        {
+                            PersianCalendar pc = new PersianCalendar();
+
+                            var persianDate = Convert.ToDateTime(localInputString);
+                            DateTime dateTime = new DateTime(persianDate.Year, persianDate.Month, persianDate.Day, pc);
+                            outputString = DateTime.Parse(dateTime.ToString(CultureInfo.CreateSpecificCulture("en-US")))
+                                                            .ToShortDateString();
+                        }
                         break;
 
                     case Function.Length:
@@ -732,6 +1243,13 @@ namespace RuriLib
 
                     case Function.ToUppercase:
                         outputString = localInputString.ToUpper();
+                        break;
+
+                    case Function.Capitalize:
+                        if (localInputString.Length > 0)
+                            outputString = localInputString[0].ToString().ToUpper() + localInputString.ToLower();
+                        else
+                            outputString = localInputString;
                         break;
 
                     case Function.Replace:
@@ -762,6 +1280,38 @@ namespace RuriLib
                         outputString = double.Parse(localInputString).ToDateTime().ToString(dateFormat);
                         break;
 
+                    case Function.CurrentDate:
+                        outputString = DateTime.Now.ToShortDateString();
+                        break;
+
+                    case Function.CurrentDay:
+                        outputString = DateTime.Now.Day.ToString();
+                        break;
+
+                    case Function.CurrentMonth:
+                        outputString = DateTime.Now.Month.ToString();
+                        break;
+
+                    case Function.CurrentYear:
+                        outputString = DateTime.Now.Year.ToString();
+                        break;
+
+                    case Function.GetRemainingDay:
+                        {
+                            var date = Convert.ToDateTime(localInputString, new CultureInfo("en-US"));
+                            var dateNow = DateTime.Now;
+                            outputString = (date - dateNow).Days.ToString();
+                        }
+                        break;
+
+                    case Function.CurrentTime:
+                        outputString = DateTime.Now.ToShortTimeString();
+                        break;
+
+                    case Function.DayOfWeek:
+                        outputString = DateTime.Now.DayOfWeek.ToString();
+                        break;
+
                     case Function.CurrentUnixTime:
                         outputString = DateTime.UtcNow.ToUnixTimeSeconds().ToString();
                         break;
@@ -771,10 +1321,19 @@ namespace RuriLib
                         break;
 
                     case Function.RandomNum:
-                        var min = int.Parse(ReplaceValues(randomMin, data));
-                        var max = int.Parse(ReplaceValues(randomMax, data));
-                        var randomNumString = data.random.Next(min, max).ToString();
-                        outputString = randomZeroPad ? randomNumString.PadLeft(max.ToString().Length, '0') : randomNumString;
+                        {
+                            long LongRandom(long min, long max, Random rand)
+                            {
+                                long result = rand.Next((int)(min >> 32), (int)(max >> 32));
+                                result = result << 32;
+                                result = result | (Int64)rand.Next((int)min, (int)max);
+                                return result;
+                            }
+                            var myMin = long.Parse(ReplaceValues(randomMin, data));
+                            var myMax = long.Parse(ReplaceValues(randomMax, data));
+                            var randomNumString = LongRandom(myMin, myMax, new Random()).ToString();
+                            outputString = randomZeroPad ? randomNumString.PadLeft(myMax.ToString().Length, '0') : randomNumString;
+                        }
                         break;
 
                     case Function.RandomString:
@@ -803,6 +1362,10 @@ namespace RuriLib
                         outputString = Math.Round(Decimal.Parse(localInputString, _style, _provider), 0, MidpointRounding.AwayFromZero).ToString();
                         break;
 
+                    case Function.Abs:
+                        outputString = Math.Abs(Decimal.Parse(localInputString, _style, _provider)).ToString();
+                        break;
+
                     case Function.Compute:
                         outputString = new DataTable().Compute(localInputString.Replace(',', '.'), null).ToString();
                         break;
@@ -824,16 +1387,16 @@ namespace RuriLib
                             );
                         break;
 
-                        /*
-                    case Function.RSADecrypt:
-                        outputString = Crypto.RSADecrypt(
-                            localInputString,
-                            ReplaceValues(RsaN, data),
-                            ReplaceValues(RsaD, data),
-                            RsaOAEP
-                            );
-                        break;
-                        */
+                    /*
+                case Function.RSADecrypt:
+                    outputString = Crypto.RSADecrypt(
+                        localInputString,
+                        ReplaceValues(RsaN, data),
+                        ReplaceValues(RsaD, data),
+                        RsaOAEP
+                        );
+                    break;
+                    */
 
                     case Function.RSAPKCS1PAD2:
                         outputString = Crypto.RSAPkcs1Pad2(
@@ -851,6 +1414,15 @@ namespace RuriLib
                         outputString = localInputString.ToCharArray()[int.Parse(ReplaceValues(charIndex, data))].ToString();
                         break;
 
+                    case Function.Split:
+                        outputString = localInputString.Split(new[] { ReplaceValues(Separator, data) }, StringSplitOption)[int.Parse(ReplaceValues(SplitIndex.ToString(), data)) - 1];
+                        break;
+
+                    case Function.Remove:
+                        if (string.IsNullOrEmpty(RemoveCount)) outputString = localInputString.Remove(int.Parse(ReplaceValues(removeSIndex, data)));
+                        else outputString = localInputString.Remove(int.Parse(ReplaceValues(RemoveSIndex, data)), int.Parse(ReplaceValues(RemoveCount, data)));
+                        break;
+
                     case Function.Substring:
                         outputString = localInputString.Substring(int.Parse(ReplaceValues(substringIndex, data)), int.Parse(ReplaceValues(substringLength, data)));
                         break;
@@ -866,7 +1438,11 @@ namespace RuriLib
                         break;
 
                     case Function.GetRandomUA:
-                        if (UserAgentSpecifyBrowser)
+                        if (!string.IsNullOrEmpty(localInputString))
+                        {
+                            outputString = UserAgent.RandomFromList(localInputString);
+                        }
+                        else if (UserAgentSpecifyBrowser)
                         {
                             outputString = UserAgent.ForBrowser(UserAgentBrowser);
                         }
@@ -877,7 +1453,7 @@ namespace RuriLib
                         break;
 
                     case Function.AESEncrypt:
-                        outputString = Crypto.AESEncrypt(localInputString, ReplaceValues(aesKey, data), ReplaceValues(aesIV, data), AesMode, AesPadding);
+                        outputString = Crypto.AESEncrypt(localInputString, ReplaceValues(aesKey, data), ReplaceValues(aesIV, data), AesMode, AesPadding, HexKeys);
                         break;
 
                     case Function.AESDecrypt:
@@ -887,6 +1463,152 @@ namespace RuriLib
                     case Function.PBKDF2PKCS5:
                         outputString = Crypto.PBKDF2PKCS5(localInputString, ReplaceValues(KdfSalt, data), KdfSaltSize, KdfIterations, KdfKeySize, KdfAlgorithm);
                         break;
+
+                    case Function.ToLetter:
+                        outputString = new string(localInputString.Where(Char.IsLetter).ToArray());
+                        break;
+
+                    case Function.ToDigit:
+                        outputString = new string(localInputString.Where(Char.IsDigit).ToArray());
+                        break;
+
+                    case Function.ToLetterOrDigit:
+                        outputString = new string(localInputString.Where(Char.IsLetterOrDigit).ToArray());
+                        break;
+
+                    case Function.EvaluateMathString:
+                        {
+                            var objResult = new CodeDomCalculator(localInputString)
+                                .Calculate();
+                            outputString = objResult.ToString();
+                        }
+                        break;
+
+                    case Function.NumberToWords:
+                        {
+                            if (int.TryParse(localInputString, out int someNumber))
+                            {
+                                outputString = someNumber.ToWords(new CultureInfo("en-US"));
+                            }
+                        }
+                        break;
+
+                    case Function.WordsToNumber:
+                        outputString = WordToNumber.ToLong(localInputString)
+                            .ToString();
+                        break;
+
+                    case Function.GenerateOAuthVerifier:
+                        byte[] number = new byte[32];
+                        RandomNumberGenerator rng = RandomNumberGenerator.Create();
+                        rng.GetBytes(number);
+                        var bytes = BitConverter.ToString(number);
+                        string encodedStr = Base64UrlEncoder.Encode(bytes);
+                        outputString = encodedStr;
+                        break;
+
+                    case Function.GenerateOAuthChallenge:
+                        var HashedVerifier = localInputString = GetHash(localInputString, Hash.SHA256, false).ToLower();
+                        var encodedHash = Base64UrlEncoder.Encode(HashedVerifier);
+                        outputString = encodedHash;
+                        break;
+
+                    case Function.GenerateGUID:
+                        outputString = Guid.NewGuid().ToString();
+                        break;
+
+                    case Function.GenerateBytes:
+                        int z = 0;
+                        try
+                        {
+                            z = Convert.ToInt32(localInputString);
+                            byte[] genbyte = new byte[z];
+                            RandomNumberGenerator rando = RandomNumberGenerator.Create();
+                            rando.GetBytes(genbyte);
+                            var end = BitConverter.ToString(genbyte);
+                            outputString = end.ToString();
+                        }
+                        catch (FormatException ex)
+                        {
+                            data.Status = BotStatus.ERROR;
+                            data.LogBuffer.Add(new LogEntry("ERROR: " + ex.Message, Colors.Tomato));
+                            outputString = "INTEGERS ONLY";
+                        }
+                        catch (OverflowException ex)
+                        {
+                            data.Status = BotStatus.ERROR;
+                            data.LogBuffer.Add(new LogEntry("ERROR: " + ex.Message, Colors.Tomato));
+                            outputString = "BYTE SIZE TOO LARGE FOR 32BIT INTEGER";
+                        }
+                        break;
+
+                    case Function.Encoding:
+                        switch (EncFunc)
+                        {
+                            case EncodingMethods.GetBytes:
+                                if (int.TryParse(ReplaceValues(GetEncoding.ToString(), data), out int bCodePage))
+                                {
+                                    outputString = Encoding.GetEncoding(bCodePage).GetBytes(ReplaceValues(localInputString, data)).ConvertToString();
+                                }
+                                else
+                                    outputString = Encoding.GetEncoding(ReplaceValues(GetEncoding.ToString(), data)).GetBytes(ReplaceValues(localInputString, data)).ConvertToString();
+                                break;
+                            case EncodingMethods.GetString:
+                                if (int.TryParse(ReplaceValues(GetEncoding.ToString(), data), out int sCodePage))
+                                {
+                                    outputString = Encoding.GetEncoding(sCodePage).GetString(ReplaceValues(localInputString, data).ConvertToByteArray());
+                                }
+                                else
+                                    outputString = Encoding.GetEncoding(GetEncoding.ToString()).GetString(ReplaceValues(localInputString, data).ConvertToByteArray());
+                                break;
+                        }
+                        break;
+
+                    case Function.Ntlm:
+                        outputString = Ntlm.Generate(ReplaceValues(localInputString, data));
+                        break;
+
+                    case Function.SCrypt:
+                        switch (scryptMeth)
+                        {
+                            case ScryptMethods.Encode:
+                                outputString = Crypto.ScryptEncoder(ReplaceValues(localInputString, data), ScryptSalt, ScryptCost, ScryptBlockSize, 1, ScryptOutputLength, Base64Output);
+                                break;
+                            case ScryptMethods.Compare:
+                                outputString = Crypto.ScryptCompare(ReplaceValues(localInputString, data), ReplaceValues(ScryptHashedPassword, data))
+                                    .ToString();
+                                break;
+                            case ScryptMethods.IsValid:
+                                outputString = Crypto.ScryptIsValid(ReplaceValues(localInputString, data))
+                                    .ToString();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+
+                    case Function.BCrypt:
+                        switch (BCryptMeth)
+                        {
+                            case BCryptMethods.Encode:
+                                if (UseWorkFactor) outputString = Crypto.BcryptEncoder(ReplaceValues(localInputString, data), BCryptWorkFactor, BCryptSalt);
+                                else outputString = Crypto.BcryptEncoder(ReplaceValues(localInputString, data), null, BCryptSalt);
+                                break;
+                            case BCryptMethods.GenerateSalt:
+                                if (UseWorkFactor)
+                                    outputString = Crypto.BcryptGenerateSalt(BCryptWorkFactor);
+                                else outputString = Crypto.BcryptGenerateSalt(null);
+                                break;
+                            case BCryptMethods.Verify:
+                                outputString = Crypto.BcryptVerify(ReplaceValues(localInputString, data), ReplaceValues(BCryptHashedPassword, data))
+                                    .ToString();
+                                break;
+                            default:
+                                break;
+                        }
+
+                        break;
+
                 }
 
                 data.Log(new LogEntry(string.Format("Executed function {0} on input {1} with outcome {2}", functionType, localInputString, outputString), Colors.GreenYellow));
@@ -910,9 +1632,13 @@ namespace RuriLib
         {
             var rawInput = inputBase64 ? Convert.FromBase64String(baseString) : Encoding.UTF8.GetBytes(baseString);
             byte[] digest;
-            
+
             switch (type)
             {
+                case Hash.MD2:
+                    digest = Crypto.MD2(rawInput);
+                    break;
+
                 case Hash.MD4:
                     digest = Crypto.MD4(rawInput);
                     break;
@@ -935,6 +1661,22 @@ namespace RuriLib
 
                 case Hash.SHA512:
                     digest = Crypto.SHA512(rawInput);
+                    break;
+
+                case Hash.SHA3_224:
+                    digest = Crypto.SHA3_224(rawInput);
+                    break;
+
+                case Hash.SHA3_256:
+                    digest = Crypto.SHA3_256(rawInput);
+                    break;
+
+                case Hash.SHA3_384:
+                    digest = Crypto.SHA3_384(rawInput);
+                    break;
+
+                case Hash.SHA3_512:
+                    digest = Crypto.SHA3_512(rawInput);
                     break;
 
                 default:
