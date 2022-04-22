@@ -982,6 +982,77 @@ if exist "$(TargetDir)cs-CZ" RD /S /Q "$(TargetDir)cs-CZ"
 if exist "$(TargetDir)de" RD /S /Q "$(TargetDir)de"
 if exist "$(TargetDir)es" RD /S /Q "$(TargetDir)es"
 if exist "$(TargetDir)fr" RD /S /Q "$(TargetDir)fr"
+
+XCOPY "$(TargetDir)ar" "$(TargetDir)bin\ar" /i /e /s /y /f
+XCOPY "$(TargetDir)az" "$(TargetDir)bin\az" /i /e /s /y /f
+XCOPY "$(TargetDir)dg" "$(TargetDir)bin\dg" /i /e /s /y /f
+XCOPY "$(TargetDir)bn-BD" "$(TargetDir)bin\bn-BD" /i /e /s /y /f
+XCOPY "$(TargetDir)cs" "$(TargetDir)bin\cs" /i /e /s /y /f
+XCOPY "$(TargetDir)da" "$(TargetDir)bin\da" /i /e /s /y /f
+XCOPY "$(TargetDir)el" "$(TargetDir)bin\el" /i /e /s /y /f
+XCOPY "$(TargetDir)el" "$(TargetDir)bin\el" /i /e /s /y /f
+XCOPY "$(TargetDir)fa" "$(TargetDir)bin\fa" /i /e /s /y /f
+XCOPY "$(TargetDir)fi-FI" "$(TargetDir)bin\fi-FI" /i /e /s /y /f
+XCOPY "$(TargetDir)fr-BE" "$(TargetDir)bin\fr-BE" /i /e /s /y /f
+XCOPY "$(TargetDir)he" "$(TargetDir)bin\he" /i /e /s /y /f
+XCOPY "$(TargetDir)hr" "$(TargetDir)bin\hr" /i /e /s /y /f
+XCOPY "$(TargetDir)id" "$(TargetDir)bin\ja" /i /e /s /y /f
+XCOPY "$(TargetDir)lv" "$(TargetDir)bin\lv" /i /e /s /y /f
+XCOPY "$(TargetDir)ms-MY" "$(TargetDir)bin\ms-MY" /i /e /s /y /f
+XCOPY "$(TargetDir)mt" "$(TargetDir)bin\mt" /i /e /s /y /f
+XCOPY "$(TargetDir)nb" "$(TargetDir)bin\nb" /i /e /s /y /f
+XCOPY "$(TargetDir)nb-NO" "$(TargetDir)bin\nb-NO" /i /e /s /y /f
+XCOPY "$(TargetDir)nl" "$(TargetDir)bin\nl" /i /e /s /y /f
+XCOPY "$(TargetDir)pl" "$(TargetDir)bin\pl" /i /e /s /y /f
+XCOPY "$(TargetDir)pt" "$(TargetDir)bin\pt" /i /e /s /y /f
+XCOPY "$(TargetDir)sk" "$(TargetDir)bin\sk" /i /e /s /y /f
+XCOPY "$(TargetDir)sl" "$(TargetDir)bin\sl" /i /e /s /y /f
+XCOPY "$(TargetDir)sr" "$(TargetDir)bin\sr" /i /e /s /y /f
+XCOPY "$(TargetDir)sr-Latn" "$(TargetDir)bin\st-Latn" /i /e /s /y /f
+XCOPY "$(TargetDir)tr" "$(TargetDir)bin\tr" /i /e /s /y /f
+XCOPY "$(TargetDir)uk" "$(TargetDir)bin\uk" /i /e /s /y /f
+XCOPY "$(TargetDir)uz-Cyrl-UZ" "$(TargetDir)bin\uz-Cyrl-UZ" /i /e /s /y /f
+XCOPY "$(TargetDir)uz-Latn-UZ" "$(TargetDir)bin\uz-Latn-UZ" /i /e /s /y /f
+XCOPY "$(TargetDir)vi" "$(TargetDir)bin\vi" /i /e /s /y /f
+XCOPY "$(TargetDir)zh-CN" "$(TargetDir)bin\zh-CN" /i /e /s /y /f
+XCOPY "$(TargetDir)zh-Hant" "$(TargetDir)bin\zh-Hant" /i /e /s /y /f
+
+if exist "$(TargetDir)af" RD /S /Q "$(TargetDir)af"
+if exist "$(TargetDir)ar" RD /S /Q "$(TargetDir)ar"
+if exist "$(TargetDir)az" RD /S /Q "$(TargetDir)az"
+if exist "$(TargetDir)bg" RD /S /Q "$(TargetDir)bg"
+if exist "$(TargetDir)bin-DB" RD /S /Q "$(TargetDir)bin-DB"
+if exist "$(TargetDir)bn-BD" RD /S /Q "$(TargetDir)bn-BD"
+if exist "$(TargetDir)cs" RD /S /Q "$(TargetDir)cs"
+if exist "$(TargetDir)da" RD /S /Q "$(TargetDir)da"
+if exist "$(TargetDir)el" RD /S /Q "$(TargetDir)el"
+if exist "$(TargetDir)fa" RD /S /Q "$(TargetDir)fa"
+if exist "$(TargetDir)fi-FI" RD /S /Q "$(TargetDir)fi-FI"
+if exist "$(TargetDir)fr-BE" RD /S /Q "$(TargetDir)fr-BE"
+if exist "$(TargetDir)he" RD /S /Q "$(TargetDir)he"
+if exist "$(TargetDir)hr" RD /S /Q "$(TargetDir)hr"
+if exist "$(TargetDir)id" RD /S /Q "$(TargetDir)id"
+if exist "$(TargetDir)ja" RD /S /Q "$(TargetDir)ja"
+if exist "$(TargetDir)lv" RD /S /Q "$(TargetDir)lv"
+if exist "$(TargetDir)ms-MY" RD /S /Q "$(TargetDir)ms-MY"
+if exist "$(TargetDir)mt" RD /S /Q "$(TargetDir)mt"
+if exist "$(TargetDir)nb" RD /S /Q "$(TargetDir)nb"
+if exist "$(TargetDir)nb-NO" RD /S /Q "$(TargetDir)nb-NO"
+if exist "$(TargetDir)nl" RD /S /Q "$(TargetDir)nl"
+if exist "$(TargetDir)pl" RD /S /Q "$(TargetDir)pl"
+if exist "$(TargetDir)pt" RD /S /Q "$(TargetDir)pt"
+if exist "$(TargetDir)sk" RD /S /Q "$(TargetDir)sk"
+if exist "$(TargetDir)sl" RD /S /Q "$(TargetDir)sl"
+if exist "$(TargetDir)sr" RD /S /Q "$(TargetDir)sr"
+if exist "$(TargetDir)sr-Latn" RD /S /Q "$(TargetDir)sr-Latn"
+if exist "$(TargetDir)tr" RD /S /Q "$(TargetDir)tr"
+if exist "$(TargetDir)uk" RD /S /Q "$(TargetDir)uk"
+if exist "$(TargetDir)uz-Cyrl-UZ" RD /S /Q "$(TargetDir)uz-Cyrl-UZ"
+if exist "$(TargetDir)uz-Latn-UZ" RD /S /Q "$(TargetDir)uz-Latn-UZ"
+if exist "$(TargetDir)vi" RD /S /Q "$(TargetDir)vi"
+if exist "$(TargetDir)zh-CN" RD /S /Q "$(TargetDir)zh-CN"
+if exist "$(TargetDir)zh-Hant" RD /S /Q "$(TargetDir)zh-Hant"
+
 if exist "$(TargetDir)hu" RD /S /Q "$(TargetDir)hu"
 if exist "$(TargetDir)it" RD /S /Q "$(TargetDir)it"
 if exist "$(TargetDir)pt-BR" RD /S /Q "$(TargetDir)pt-BR"
