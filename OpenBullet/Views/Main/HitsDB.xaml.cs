@@ -298,7 +298,7 @@ namespace OpenBullet.Views.Main
             catch { }
 
             // Switch to Runner
-            OB.MainWindow.menuOptionRunner_MouseDown(this, null);
+            OB.MainWindow.menuOptionRunner_Click(this, null);
         }
 
         private void deleteSelected_Click(object sender, RoutedEventArgs e)

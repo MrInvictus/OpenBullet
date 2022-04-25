@@ -11,9 +11,9 @@ namespace OpenBullet.ViewModels
     public class OBSettingsThemes : ViewModelBase
     {
         // BACKGROUND
-        private string backgroundMain = "#222";
+        private string backgroundMain = "#FF232123";
         public string BackgroundMain { get { return backgroundMain; } set { backgroundMain = value; OnPropertyChanged(); } }
-        private string backgroundSecondary = "#111";
+        private string backgroundSecondary = "#FF1D1B1D";
         public string BackgroundSecondary { get { return backgroundSecondary; } set { backgroundSecondary = value; OnPropertyChanged(); } }
 
         // FOREGROUND
@@ -48,6 +48,8 @@ namespace OpenBullet.ViewModels
         public int SnowAmount { get { return snowAmount; } set { snowAmount = value; OnPropertyChanged(); } }
         private bool allowTransparency = false;
         public bool AllowTransparency { get { return allowTransparency; } set { allowTransparency = value; OnPropertyChanged(); } }
+        private bool enableSideBarMenu = false;
+        public bool EnableSideBarMenu { get { return enableSideBarMenu; } set { enableSideBarMenu = value; OnPropertyChanged(); } }
 
         public void Reset()
         {

@@ -27,6 +27,25 @@ namespace OpenBullet.Views.Main.Settings.OpenBullet
             SetColorPreviews();
             SetImagePreviews();
             OB.MainWindow.AllowsTransparency = OB.OBSettings.Themes.AllowTransparency;
+
+            // Side Bar Menu
+            if (OB.OBSettings.Themes.EnableSideBarMenu)
+            {
+                OB.MainWindow.sideBarMenu.Width = 68;
+                OB.MainWindow.sideBarMenu.Visibility = Visibility.Visible;
+                OB.MainWindow.Main.Margin = new Thickness(66, 5.0, 0.0, 0.0);
+                Grid.SetRowSpan((UIElement)OB.MainWindow.Main, 2);
+                Grid.SetRow((UIElement)OB.MainWindow.Main, 1);
+                OB.MainWindow.topBarMenu.Visibility = Visibility.Hidden;
+                OB.MainWindow.topSideMenu.Visibility = Visibility.Hidden;
+                OB.MainWindow.Height = 736.0;
+            }
+            else
+            {
+                OB.MainWindow.topBarMenu.Visibility = Visibility.Visible;
+                OB.MainWindow.topSideMenu.Visibility = Visibility.Visible;
+                OB.MainWindow.sideBarMenu.Visibility = Visibility.Hidden;
+            }
         }
 
         public void SetColors()

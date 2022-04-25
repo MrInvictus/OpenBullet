@@ -1,11 +1,5 @@
-﻿using OpenBullet.ViewModels;
-using OpenBullet.Views.Main;
-using OpenBullet.Views.Main.Settings;
-using OpenBullet.Views.Main.Runner;
-using RuriLib;
-using RuriLib.ViewModels;
-using System;
-using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -19,11 +13,16 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using MaterialDesignThemes.Wpf;
 using OpenBullet.Plugins;
-using System.Collections.Generic;
-using OpenBullet.Views.UserControls;
+using OpenBullet.ViewModels;
+using OpenBullet.Views.Main;
+using OpenBullet.Views.Main.Runner;
+using OpenBullet.Views.Main.Settings;
 using OpenBullet.Views.StackerBlocks;
+using RuriLib;
 using RuriLib.LS;
+using RuriLib.ViewModels;
 
 namespace OpenBullet
 {
@@ -242,7 +241,7 @@ namespace OpenBullet
             OB.Logger.LogInfo(Components.Main, "Initialized Plugins");
             AboutPage = new About();
 
-            menuOptionRunner_MouseDown(this, null);
+            menuOptionRunner_Click(this, null);
 
             var width = OB.OBSettings.General.StartingWidth;
             var height = OB.OBSettings.General.StartingHeight;
@@ -323,56 +322,56 @@ namespace OpenBullet
         }
 
         #region Menu Options MouseDown Events
-        public void menuOptionRunner_MouseDown(object sender, MouseButtonEventArgs e)
+        public void menuOptionRunner_Click(object sender, RoutedEventArgs e)
         {
             if (CurrentRunnerPage == null) Main.Content = RunnerManagerPage;
             else Main.Content = CurrentRunnerPage;
             menuOptionSelected(menuOptionRunner);
         }
 
-        private void menuOptionProxyManager_MouseDown(object sender, MouseButtonEventArgs e)
+        private void menuOptionProxyManager_Click(object sender, RoutedEventArgs e)
         {
             Main.Content = ProxyManagerPage;
             menuOptionSelected(menuOptionProxyManager);
         }
 
-        private void menuOptionWordlistManager_MouseDown(object sender, MouseButtonEventArgs e)
+        private void menuOptionWordlistManager_Click(object sender, RoutedEventArgs e)
         {
             Main.Content = WordlistManagerPage;
             menuOptionSelected(menuOptionWordlistManager);
         }
 
-        private void menuOptionConfigCreator_MouseDown(object sender, MouseButtonEventArgs e)
+        private void menuOptionConfigCreator_Click(object sender, RoutedEventArgs e)
         {
             Main.Content = ConfigsPage;
             menuOptionSelected(menuOptionConfigCreator);
         }
 
-        private void menuOptionHitsDatabase_MouseDown(object sender, MouseButtonEventArgs e)
+        private void menuOptionHitsDatabase_Click(object sender, RoutedEventArgs e)
         {
             Main.Content = HitsDBPage;
             menuOptionSelected(menuOptionHitsDatabase);
         }
 
-        private void menuOptionTools_MouseDown(object sender, MouseButtonEventArgs e)
+        private void menuOptionTools_Click(object sender, RoutedEventArgs e)
         {
             Main.Content = ToolsPage;
             menuOptionSelected(menuOptionTools);
         }
 
-        private void menuOptionPlugins_MouseDown(object sender, MouseButtonEventArgs e)
+        private void menuOptionPlugins_Click(object sender, RoutedEventArgs e)
         {
             Main.Content = PluginsPage;
             menuOptionSelected(menuOptionPlugins);
         }
 
-        private void menuOptionSettings_MouseDown(object sender, MouseButtonEventArgs e)
+        private void menuOptionSettings_Click(object sender, RoutedEventArgs e)
         {
             Main.Content = OBSettingsPage;
             menuOptionSelected(menuOptionSettings);
         }
 
-        private void menuOptionAbout_MouseDown(object sender, MouseButtonEventArgs e)
+        private void menuOptionAbout_Click(object sender, RoutedEventArgs e)
         {
             Main.Content = AboutPage;
             menuOptionSelected(menuOptionAbout);
@@ -384,12 +383,20 @@ namespace OpenBullet
             {
                 try
                 {
-                    var c = (Label)child;
-                    c.Foreground = Utils.GetBrush("ForegroundMain");
+                    Button option;
+                    if (child is Badged badged)
+                    {
+                        option = badged.Content as Button;
+                    }
+                    else
+                    {
+                        option = (Button)child;
+                    }
+                    option.Foreground = Utils.GetBrush("ForegroundMain");
                 }
                 catch { }
             }
-            ((Label)sender).Foreground = Utils.GetBrush("ForegroundMenuSelected");
+            ((Button)sender).Foreground = Utils.GetBrush("ForegroundMenuSelected");
         }
         #endregion
 
